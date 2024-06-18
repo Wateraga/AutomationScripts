@@ -1,0 +1,74 @@
+# Enable script execution
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+
+# Turn off UAC
+Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
+
+# Run Activation Command
+Invoke-Expression (Invoke-RestMethod -Uri 'https://get.activated.win')
+Write-Host "Press any key to continue..."
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+# Update using Powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Install-Module -Name PSWindowsUpdate
+Import-Module PSWindowsUpdate
+Get-WindowsUpdate -Install -Verbose
+
+# 
+Run Install-WindowsUpdatesAndReboot.ps1 if situation is not time sensitive
+#
+
+---
+
+Install Scoop:
+SET SCOOP AND CHOCO IN ENVIRONMENTAL VARIABLES FIRST!:
+
+# Create user environmental variables
+Log-Message "Creating user environmental variables..."
+[System.Environment]::SetEnvironmentVariable('Scoop', 'D:\Software\Scoop', 'User')
+[System.Environment]::SetEnvironmentVariable('ChocolateyInstall', 'D:\Software\Chocolatey', 'User')
+
+
+Name: 
+Scoop
+Variable: 
+D:\Software\Scoop
+
+Install Chocolatey:
+
+Name: 
+ChocolateyInstall
+Variable: 
+D:\Software\Chocolatey
+ 
+# Install Scoop
+Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+
+# Add Scoop buckets
+Log-Message "Adding Scoop buckets..."
+scoop bucket add extras
+scoop bucket add versions
+scoop bucket add okibcn_ScoopMaster https://github.com/okibcn/ScoopMaster
+scoop bucket add mo-san_scoop-bucket https://github.com/mo-san/scoop-bucket
+scoop bucket add natecohen_scoop-av https://github.com/natecohen/scoop-av
+scoop bucket add spotify https://github.com/TheRandomLabs/Scoop-Spotify.git
+scoop bucket add diklios https://github.com/diklios5768/diklios-scoop-bucket
+
+Import ScoopList.json
+
+# Install Chocolatey
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+Import packages.config
+
+Install WingetUI
+
+---
+
+Hazy Spicetify Theme:
+https://github.com/Astromations/Hazy
+iwr -useb https://raw.githubusercontent.com/Astromations/Hazy/main/install.ps1 | iex
+
+FlyingFox Firefox Theme:
+https://github.com/Astromations/FlyingFox/releases
